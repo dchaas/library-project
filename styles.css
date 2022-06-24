@@ -1,5 +1,62 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    background-color: #ececec;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+table {
+    padding: 20px;
+}
+
 th, tr, td {
     border: solid 1px black;
     padding: 10px;
     text-align: center;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+label {
+    display: inline;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    background-color: #9fd3c7;
+    color:  #142d4c;
+    box-shadow: 1px 1px 5px 1px #142d4c;
+}
+
+.form-popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: antiquewhite;
+    grid-template-columns: 1fr 3fr;
+    position: fixed;
+    padding: 20px;
+    z-index: 2;
+    left: 30vw;
+    right: 30vw;
+    top: 30vh;
+    border: solid 1px gray;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px  rgba(10,20,30,0.5);
+}
+
+#new-book {
+    width: 50%;
+    align-self: center;
+    background-color: #142d4c;
+    color: white;
+    font-weight: 600;
+    border-radius: 15px;
+    padding: 10px;
+    font-size: 2rem;
 }

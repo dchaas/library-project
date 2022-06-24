@@ -1,5 +1,16 @@
 // DOM elements
 let tbl = document.querySelector('.tbody');
+let newBook = document.querySelector('#new-book');
+let formDiv = document.querySelector('.form-popup');
+let addBook = document.querySelector('#add-book');
+
+const titleEntry = document.querySelector('#title');
+const authorEntry = document.querySelector('#author');
+const pagesEntry = document.querySelector('#pages');
+const readEntry = document.querySelector('#read');;
+
+newBook.addEventListener('click', function() {
+    formDiv.classList.remove('hidden')});
 
 // setup the library array
 let myLibrary = [];
@@ -20,7 +31,9 @@ function addBookToLibrary(book) {
 }
 
 function displayBooks() {
-    
+    while (tbl.firstChild) {
+        tbl.removeChild(tbl.firstChild);
+    }
     myLibrary.forEach((book)=> {
         // create a table entry for the book
         let row = document.createElement("tr");
@@ -47,10 +60,17 @@ function displayBooks() {
     });
 }
 
-const b1 = new Book('Pelican Brief', 'Grisham',580,true);
-const b2 = new Book('Behind Enemey Lines', 'Clancy',343,false);
+//const b1 = new Book('Pelican Brief', 'Grisham',580,true);
+//const b2 = new Book('Behind Enemey Lines', 'Clancy',343,false);
+
+addBook.addEventListener('click', function() {
+    const book = new Book(titleEntry.value,authorEntry.value,pagesEntry.value,readEntry.checked);
+    console.log(book);
+    addBookToLibrary(book);
+    console.log(myLibrary);
+    displayBooks();
+    formDiv.classList.add('hidden');
+});
 
 addBookToLibrary(b1);
 addBookToLibrary(b2);
-
-displayBooks();
