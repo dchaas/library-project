@@ -1,8 +1,9 @@
 // DOM elements
-let tbl = document.querySelector('.tbody');
-let newBook = document.querySelector('#new-book');
-let formDiv = document.querySelector('.form-popup');
-let addBook = document.querySelector('#add-book');
+const tbl = document.querySelector('.tbody');
+const newBook = document.querySelector('#new-book');
+const formDiv = document.querySelector('.form-popup');
+const addBook = document.querySelector('#add-book');
+const container = document.querySelector('.card-container');
 
 const titleEntry = document.querySelector('#title');
 const authorEntry = document.querySelector('#author');
@@ -26,10 +27,12 @@ function Book(title, author, numPages,read) {
     }
 }
 
+// define the read book prototype function
 Book.prototype.readBook = function() {
     this.read = !this.read;
 }
 
+// helper functions to add books to the library and display them
 function addBookToLibrary(book) {
     myLibrary.push(book);
 }
@@ -80,8 +83,47 @@ function displayBooks() {
     });
 }
 
-const b1 = new Book('Pelican Brief', 'Grisham',580,true);
-const b2 = new Book('Behind Enemey Lines', 'Clancy',343,false);
+function cardHTML(book) {
+    let html = `
+    <div class="card" id="${book.title.replace(/\s/g,'')}">
+            <h3 class="card-title">${book.title}</h3>
+            <p class="card-author">by ${book.author}</p>
+            <p class="card-pages"># Pages: ${book.numPages}</p>
+            <button class="card-read" id="read-${book.title.replace(/\s/g,'')}" data="${book.title}">${book.read ? "Read" : "Unread"}</button>
+            <button class="card-delete" id="delete-${book.title.replace(/\s/g,'')}" data="${book.title}">Delete</button>
+        </div>
+
+    `;
+    return html
+}
+
+function displayBooksCard() {
+    container.innerHTML = ''; // clear out the contents
+    myLibrary.forEach((book)=> {
+        container.innerHTML += cardHTML(book);
+        
+         let finished = document.querySelector(`#read-${book.title.replace(/\s/g,'')}`);
+         if (book.read) {
+            finished.classList.add('read-book');
+         }
+    });
+    // asssign the delete button functionality
+    let btns = document.querySelectorAll('.card-delete');
+    btns.forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            deleteBook(event.target.getAttribute("data"));
+        });
+    });
+    // asssign the read button functionality
+    let readBtns = document.querySelectorAll('.card-read');
+    readBtns.forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            markRead(event.target.getAttribute("data"));
+        });
+    });
+
+
+    }
 
 addBook.addEventListener('click', function() {
     const book = new Book(titleEntry.value,authorEntry.value,pagesEntry.value,readEntry.checked);
@@ -91,24 +133,28 @@ addBook.addEventListener('click', function() {
     readEntry.checked = false;
     addBookToLibrary(book);
     console.log(myLibrary);
-    displayBooks();
+    displayBooksCard();
     formDiv.classList.add('hidden');
 });
 
 
 function deleteBook(bTitle) {
     myLibrary = myLibrary.filter(book => book.title!==bTitle);
-    displayBooks();
+    //console.log(bTitle);
+    displayBooksCard();
 }
 
 function markRead(bTitle) {
     let id = myLibrary.findIndex(book => {return book.title===bTitle}); 
-    console.log(myLibrary[id]);
+    //console.log(myLibrary[id]);
     myLibrary[id].readBook();
-    displayBooks();
+    displayBooksCard();
 }
 
 
+// give it some starting content
+const b1 = new Book('Pelican Brief', 'Grisham',580,true);
+const b2 = new Book('Behind Enemey Lines', 'Clancy',343,false);
 addBookToLibrary(b1);
 addBookToLibrary(b2);
-displayBooks();
+displayBooksCard();
