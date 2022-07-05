@@ -16,145 +16,111 @@ newBook.addEventListener('click', function() {
 // setup the library array
 let myLibrary = [];
 
-// make a JS object constructor
-function Book(title, author, numPages,read) {
-    this.title = title;
-    this.author = author;
-    this.numPages = numPages;
-    this.read = read;
-    this.info = function() {
-        return `${title} by ${author}, ${numPages} pages, ${read}`;
+// make a book class
+class Book  {
+    constructor(title,author,numPages,read) {
+        this.title = title;
+        this.author = author;
+        this.numPages = numPages;
+        this.read = read;
+    }
+   
+    info()  {
+        return `${this.title} by ${this.author}, ${this.numPages} pages, ${this.read}`;
+    }
+
+    readBook = function() {
+        this.read = !this.read;
     }
 }
 
-// define the read book prototype function
-Book.prototype.readBook = function() {
-    this.read = !this.read;
-}
-
-// helper functions to add books to the library and display them
-function addBookToLibrary(book) {
-    myLibrary.push(book);
-}
-
-function displayBooks() {
-    while (tbl.firstChild) {
-        tbl.removeChild(tbl.firstChild);
-    }
-    myLibrary.forEach((book)=> {
-        // create a table entry for the book
-        let row = document.createElement("tr");
-        let title = document.createElement("td");
-        let author = document.createElement("td");
-        let pages = document.createElement("td");
-        let finishedTd = document.createElement("td");
-        let finished = document.createElement("button");
-        let removeTd = document.createElement("td");
-        let remove = document.createElement("button");
-        remove.innerHTML = "Delete";
-        remove.setAttribute("data",book.title);
-        remove.classList.add('delete-btn');
-        remove.addEventListener('click', (event) => {
-            deleteBook(event.target.getAttribute("data"));
-        });
-        
-        finished.setAttribute("data",book.title);
-        finished.addEventListener('click', (event) => {
-            markRead(event.target.getAttribute("data"));
-        });
-
-        removeTd.appendChild(remove);
-        finishedTd.appendChild(finished);
-
-        title.innerHTML = book.title;
-        author.innerHTML = book.author;
-        pages.innerHTML = book.numPages;
-        finished.innerHTML = book.read ? "Yes" : "No";
-        if (book.read) {
-            finished.classList.add('read-book');
-        }
-
-        row.appendChild(title);
-        row.appendChild(author);
-        row.appendChild(pages);
-        row.appendChild(finishedTd);
-        row.appendChild(removeTd);
-        tbl.appendChild(row);
-    });
-}
-
-function cardHTML(book) {
-    let html = `
-    <div class="card" id="${book.title.replace(/\s/g,'')}">
-            <h3 class="card-title">${book.title}</h3>
-            <p class="card-author">by ${book.author}</p>
-            <p class="card-pages"># Pages: ${book.numPages}</p>
-            <button class="card-read" id="read-${book.title.replace(/\s/g,'')}" data="${book.title}">${book.read ? "Read" : "Unread"}</button>
-            <button class="card-delete" id="delete-${book.title.replace(/\s/g,'')}" data="${book.title}">Delete</button>
-        </div>
-
-    `;
-    return html
-}
-
-function displayBooksCard() {
-    container.innerHTML = ''; // clear out the contents
-    myLibrary.forEach((book)=> {
-        container.innerHTML += cardHTML(book);
-        
-         let finished = document.querySelector(`#read-${book.title.replace(/\s/g,'')}`);
-         if (book.read) {
-            finished.classList.add('read-book');
-         }
-    });
-    // asssign the delete button functionality
-    let btns = document.querySelectorAll('.card-delete');
-    btns.forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-            deleteBook(event.target.getAttribute("data"));
-        });
-    });
-    // asssign the read button functionality
-    let readBtns = document.querySelectorAll('.card-read');
-    readBtns.forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-            markRead(event.target.getAttribute("data"));
-        });
-    });
-
-
+// make a library class
+class Library {
+    constructor() {
+        this.myLibrary = [];
     }
 
-addBook.addEventListener('click', function() {
-    const book = new Book(titleEntry.value,authorEntry.value,pagesEntry.value,readEntry.checked);
-    titleEntry.value = "";
-    authorEntry.value = "";
-    pagesEntry.value = "";
-    readEntry.checked = false;
-    addBookToLibrary(book);
-    console.log(myLibrary);
-    displayBooksCard();
-    formDiv.classList.add('hidden');
-});
+    addBookToLibrary(book) {
+        this.myLibrary.push(book);
+    }
 
+    displayBooksCard() {
+        container.innerHTML = ''; // clear out the contents
+        this.myLibrary.forEach((book)=> {
+            container.innerHTML += this.cardHTML(book);
+            
+             let finished = document.querySelector(`#read-${book.title.replace(/\s/g,'')}`);
+             if (book.read) {
+                finished.classList.add('read-book');
+             }
+        });
+        // asssign the delete button functionality
+        let btns = document.querySelectorAll('.card-delete');
+        btns.forEach((btn) => {
+            btn.addEventListener('click', (event) => {
+                this.deleteBook(event.target.getAttribute("data"));
+            });
+        });
+        // asssign the read button functionality
+        let readBtns = document.querySelectorAll('.card-read');
+        readBtns.forEach((btn) => {
+            btn.addEventListener('click', (event) => {
+                this.markRead(event.target.getAttribute("data"));
+            });
+        });
+    
+    
+    }
 
-function deleteBook(bTitle) {
-    myLibrary = myLibrary.filter(book => book.title!==bTitle);
-    //console.log(bTitle);
-    displayBooksCard();
+    cardHTML(book) {
+        let html = `
+        <div class="card" id="${book.title.replace(/\s/g,'')}">
+                <h3 class="card-title">${book.title}</h3>
+                <p class="card-author">by ${book.author}</p>
+                <p class="card-pages"># Pages: ${book.numPages}</p>
+                <button class="card-read" id="read-${book.title.replace(/\s/g,'')}" data="${book.title}">${book.read ? "Read" : "Unread"}</button>
+                <button class="card-delete" id="delete-${book.title.replace(/\s/g,'')}" data="${book.title}">Delete</button>
+            </div>
+    
+        `;
+        return html
+    }
+
+    deleteBook(bTitle) {
+        this.myLibrary = this.myLibrary.filter(book => book.title!==bTitle);
+        //console.log(bTitle);
+        this.displayBooksCard();
+    }
+    
+    markRead(bTitle) {
+        let id = this.myLibrary.findIndex(book => {return book.title===bTitle}); 
+        //console.log(myLibrary[id]);
+        this.myLibrary[id].readBook();
+        this.displayBooksCard();
+    }
+
+    addBook() {
+        const book = new Book(titleEntry.value,authorEntry.value,pagesEntry.value,readEntry.checked);
+        titleEntry.value = "";
+        authorEntry.value = "";
+        pagesEntry.value = "";
+        readEntry.checked = false;
+        this.addBookToLibrary(book);
+        console.log(myLibrary);
+        this.displayBooksCard();
+        formDiv.classList.add('hidden');
+    }
+    
 }
 
-function markRead(bTitle) {
-    let id = myLibrary.findIndex(book => {return book.title===bTitle}); 
-    //console.log(myLibrary[id]);
-    myLibrary[id].readBook();
-    displayBooksCard();
-}
+const library = new Library();
 
+
+addBook.addEventListener('click', library.addBook.bind(library));
 
 // give it some starting content
 const b1 = new Book('Pelican Brief', 'Grisham',580,true);
 const b2 = new Book('Behind Enemey Lines', 'Clancy',343,false);
-addBookToLibrary(b1);
-addBookToLibrary(b2);
-displayBooksCard();
+library.addBookToLibrary(b1);
+library.addBookToLibrary(b2);
+library.displayBooksCard();
